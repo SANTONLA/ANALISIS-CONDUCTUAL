@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mercados financieros e IA: experimentos conductuales</title>
+<style>
+:root{
+  --wine:#344b63; --wine-deep:#202d3b; --garnet:#526d86; --rose:#8297aa;
+  --rose-light:#eaf0f5; --paper:#fbfcfd; --ink:#273440; --muted:#647383;
+  --line:#d4dee7; --gold:#9aa8b5; --shadow:0 12px 32px rgba(35,55,75,.09);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f4f7fa;color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--garnet);text-underline-offset:3px}
+.hero{background:linear-gradient(125deg,var(--wine-deep),var(--wine) 56%,var(--garnet));color:white;padding:64px 24px 52px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:390px;height:390px;border:1px solid rgba(255,255,255,.13);border-radius:50%;right:-95px;top:-180px;box-shadow:0 0 0 35px rgba(255,255,255,.035),0 0 0 75px rgba(255,255,255,.025)}
+.hero-inner,main,.nav-inner{max-width:1120px;margin:auto}
+.eyebrow{text-transform:uppercase;letter-spacing:.17em;font-size:.76rem;font-weight:800;color:#d5e0e9}
+h1{font-size:clamp(2.25rem,5vw,4.25rem);line-height:1.06;max-width:850px;margin:16px 0}
+.hero p{max-width:740px;color:#e8eef3;font-size:1.12rem}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}
+.pill{border:1px solid rgba(255,255,255,.34);border-radius:999px;padding:5px 12px;font-size:.84rem}
+nav{position:sticky;top:0;z-index:10;background:rgba(251,252,253,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;gap:7px;overflow-x:auto;padding:10px 18px}
+nav a{white-space:nowrap;text-decoration:none;font-weight:700;font-size:.9rem;padding:8px 11px;border-radius:9px}
+nav a:hover{background:var(--rose-light)}
+main{padding:28px 20px 70px}
+.intro{font-size:1.08rem;color:#514148;max-width:900px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:22px 0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;color:var(--wine);font-size:1.08rem}
+.card p{margin:0;color:#59474e}
+.kicker{font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--rose)}
+section{padding-top:28px;margin-top:18px;scroll-margin-top:78px}
+h2{font-size:clamp(1.55rem,3vw,2.25rem);line-height:1.2;color:var(--wine);margin:0 0 12px}
+h2 .num{display:inline-grid;place-items:center;background:var(--wine);color:#fff;width:38px;height:38px;border-radius:12px;font-size:1rem;margin-right:10px;vertical-align:5px}
+h3{color:var(--garnet);margin:22px 0 8px}
+.lead{color:var(--muted);max-width:850px;margin-top:0}
+table{border-collapse:collapse;width:100%;margin:16px 0;background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:.94rem}
+th{background:var(--wine);color:white;text-align:left;font-weight:700}
+th,td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#f4f7fa}
+.codebox{position:relative;background:#202d3b;color:#f0f4f7;border-radius:14px;margin:14px 0 22px;overflow:hidden;border:1px solid #43566a}
+.codehead{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#304357;padding:10px 14px;color:#dce6ee;font-size:.82rem;font-weight:800}
+button{border:0;cursor:pointer;font:inherit}
+.copy{background:#e5edf4;color:var(--wine);font-weight:800;border-radius:8px;padding:6px 10px;font-size:.82rem}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;padding:18px;font: .88rem/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}
+.note,.warning{border-left:4px solid var(--rose);background:var(--rose-light);padding:14px 17px;border-radius:0 10px 10px 0;margin:18px 0}
+.warning{border-color:#b57b38;background:#fff5e8}
+.note strong,.warning strong{color:var(--wine)}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.company-groups{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.company{border-top:4px solid var(--garnet)}
+.ticker{display:inline-block;background:var(--rose-light);color:var(--wine);border-radius:6px;padding:2px 7px;font:700 .83rem ui-monospace,monospace}
+.pipeline{counter-reset:step;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.step{counter-increment:step;border:1px solid var(--line);background:#fff;border-radius:13px;padding:15px}
+.step:before{content:counter(step,decimal-leading-zero);display:block;color:var(--rose);font-weight:900;font-size:1.3rem;margin-bottom:4px}
+.footer{background:var(--wine-deep);color:#f7e7ec;padding:28px 20px;text-align:center}
+.footer small{color:#d9b9c4}
+.small{font-size:.88rem;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+@media(max-width:760px){.grid,.pipeline{grid-template-columns:1fr}.company-groups{grid-template-columns:1fr}.hero{padding:45px 20px 38px}main{padding-inline:15px}.card{padding:17px}table{display:block;overflow-x:auto}}
+@media print{nav{display:none}.hero{padding:30px;background:var(--wine);print-color-adjust:exact;-webkit-print-color-adjust:exact}body{background:white}.card,.codebox{box-shadow:none;break-inside:avoid}section{break-inside:auto}.copy{display:none}a{color:inherit}}
+</style>
+</head>
+<body>
+<header class="hero" id="inicio">
+  <div class="hero-inner">
+    <div class="eyebrow">Guía práctica · Finanzas conductuales y analítica con IA</div>
+    <h1>Mercados financieros: experimentos conductuales con IA</h1>
+    <p>Una guía para estudiar diez empresas cotizadas combinando precios, volumen, patrones de decisión e indicadores conductuales. El sentimiento de noticias es solo una de varias líneas posibles.</p>
+    <div class="hero-meta"><span class="pill">5 tecnológicas</span><span class="pill">5 de gran consumo</span><span class="pill">Periodo inicial: 2020–2025</span><span class="pill">Finanzas conductuales</span><span class="pill">Proyecto académico</span></div>
+  </div>
+</header>
+<nav><div class="nav-inner">
+<a href="#proyecto">El proyecto</a><a href="#empresas">Empresas</a><a href="#datos">Datos</a><a href="#pipeline">Pipeline</a><a href="#analisis">Análisis</a><a href="#conductual">Experimentos conductuales</a><a href="#prompts">Prompts</a><a href="#dashboard">Dashboard</a><a href="#calidad">Control de calidad</a>
+</div></nav>
+<main>
+<p class="intro">El objetivo es explorar cómo se relacionan los precios y el volumen con patrones compatibles con mecanismos conductuales: atención limitada, anclaje, aversión a las pérdidas, exceso de confianza y comportamiento gregario. El análisis de sentimiento puede ser una señal complementaria, no el único experimento. Con datos observacionales se estudian proxies conductuales; demostrar causalidad requiere un diseño experimental o una estrategia de identificación convincente.</p>
+<div class="grid">
+  <article class="card"><div class="kicker">01 · Mercado</div><h3>Rentabilidad y riesgo</h3><p>Comparar rentabilidad acumulada, volatilidad, drawdown y comportamiento frente a un benchmark.</p></article>
+  <article class="card"><div class="kicker">02 · Conducta</div><h3>Proxies conductuales</h3><p>Explorar anclaje, atención, aversión a las pérdidas, exceso de confianza y herding con variables observables.</p></article>
+  <article class="card"><div class="kicker">03 · Investigación</div><h3>Hipótesis y validación</h3><p>Comparar modelos base y variables conductuales con validación temporal fuera de muestra.</p></article>
+</div>
+
+<section id="proyecto">
+<h2><span class="num">1</span>Ficha del proyecto</h2>
+<p class="lead">Una definición inicial que se debe fijar antes de observar los resultados.</p>
+<table><tbody>
+<tr><th>Pregunta central</th><td>¿Qué patrones de mercado son compatibles con mecanismos conductuales y aportan información adicional para explicar rentabilidad, volumen y riesgo en empresas tecnológicas y de gran consumo?</td></tr>
+<tr><th>Universo</th><td>10 empresas cotizadas en EE. UU.: cinco tecnológicas y cinco de gran consumo.</td></tr>
+<tr><th>Ventana inicial</th><td>2020–2025. Se puede ampliar si la cobertura de noticias y la calidad de los datos lo permiten.</td></tr>
+<tr><th>Frecuencia</th><td>Precios y volumen diarios; noticias con fecha/hora; variables conductuales calculadas con información disponible en cada fecha.</td></tr>
+<tr><th>Herramientas</th><td>Python en Anaconda/VS Code, pandas, yfinance, scikit-learn, statsmodels, herramientas de análisis textual y Power BI.</td></tr>
+<tr><th>Entregables</th><td>Dataset documentado, hipótesis conductuales, análisis exploratorio, pruebas de robustez, dashboard e informe reproducible.</td></tr>
+</tbody></table>
+<div class="note"><strong>Principio de rigor:</strong> distinguir descripción, asociación y predicción. Documentar las fuentes, transformaciones, parámetros, sesgos y limitaciones.</div>
+</section>
+
+<section id="empresas">
+<h2><span class="num">2</span>Las diez empresas</h2>
+<p class="lead">Se mantienen las cinco tecnológicas del proyecto previo. Las cinco compañías de gran consumo son una propuesta inicial para completar el universo.</p>
+<div class="company-groups">
+<div class="card company"><h3>Tecnología</h3>
+<table><tbody>
+<tr><td><strong>Apple</strong></td><td><span class="ticker">AAPL</span></td><td>Hardware, dispositivos y servicios</td></tr>
+<tr><td><strong>Microsoft</strong></td><td><span class="ticker">MSFT</span></td><td>Software, nube y productividad</td></tr>
+<tr><td><strong>NVIDIA</strong></td><td><span class="ticker">NVDA</span></td><td>Semiconductores y computación acelerada</td></tr>
+<tr><td><strong>Amazon</strong></td><td><span class="ticker">AMZN</span></td><td>Comercio electrónico y nube</td></tr>
+<tr><td><strong>Alphabet</strong></td><td><span class="ticker">GOOGL</span></td><td>Publicidad digital, búsqueda y nube</td></tr>
+</tbody></table></div>
+<div class="card company"><h3>Gran consumo</h3>
+<table><tbody>
+<tr><td><strong>Walmart</strong></td><td><span class="ticker">WMT</span></td><td>Distribución minorista</td></tr>
+<tr><td><strong>Costco</strong></td><td><span class="ticker">COST</span></td><td>Distribución por membresía</td></tr>
+<tr><td><strong>Coca-Cola</strong></td><td><span class="ticker">KO</span></td><td>Bebidas</td></tr>
+<tr><td><strong>Procter &amp; Gamble</strong></td><td><span class="ticker">PG</span></td><td>Productos domésticos y cuidado personal</td></tr>
+<tr><td><strong>PepsiCo</strong></td><td><span class="ticker">PEP</span></td><td>Bebidas y alimentación</td></tr>
+</tbody></table></div>
+</div>
+<p class="small">La clasificación de “gran consumo” es amplia: registra la taxonomía sectorial utilizada y mantenla estable. Estas diez empresas no representan por sí solas todos sus sectores.</p>
+</section>
+
+<section id="datos">
+<h2><span class="num">3</span>¿De dónde salen los datos?</h2>
+<div class="grid">
+<article class="card"><h3>Precios y mercado</h3><ul><li><a href="https://ranaroussi.github.io/yfinance/" target="_blank" rel="noopener">yfinance</a> para explorar OHLC, volumen y precios ajustados.</li><li>SPY como aproximación al mercado estadounidense.</li><li>Estados financieros de informes corporativos o fuentes documentadas.</li></ul></article>
+<article class="card"><h3>Noticias y texto</h3><ul><li>FNSPID para prototipar con noticias históricas.</li><li>Marketaux u otro proveedor, tras revisar cobertura y límites.</li><li>Registrar identificador, URL, fecha/hora, ticker y texto original.</li></ul></article>
+<article class="card"><h3>Sentimiento</h3><ul><li><a href="https://huggingface.co/ProsusAI/finbert" target="_blank" rel="noopener">ProsusAI/FinBERT</a> para texto financiero en inglés.</li><li>Guardar etiquetas y probabilidades de las tres clases.</li><li>Evaluar por separado cualquier texto en otros idiomas.</li></ul></article>
+</div>
+<div class="warning"><strong>Atención:</strong> una noticia publicada después del cierre no puede usarse para explicar una rentabilidad que ya se había producido ese día. Revisa también las licencias y condiciones de uso de cada fuente.</div>
+<h3>Diccionario mínimo de variables</h3>
+<table><thead><tr><th>Variable</th><th>Qué representa</th><th>Control necesario</th></tr></thead><tbody>
+<tr><td><code>date / ticker</code></td><td>Fecha de negociación y símbolo</td><td>Calendario, zona horaria y ticker correcto</td></tr>
+<tr><td><code>adj_close</code></td><td>Precio ajustado</td><td>Fuente y ajustes documentados</td></tr>
+<tr><td><code>return_1d</code></td><td>Rentabilidad diaria</td><td>Fórmula consistente</td></tr>
+<tr><td><code>volatility_20d</code></td><td>Volatilidad móvil</td><td>Ventana y anualización explícitas</td></tr>
+<tr><td><code>drawdown</code></td><td>Caída desde el máximo previo</td><td>Serie de riqueza calculada correctamente</td></tr>
+<tr><td><code>published_at</code></td><td>Fecha y hora de la noticia</td><td>Necesaria para evitar fuga de información</td></tr>
+<tr><td><code>sentiment_label</code></td><td>Positivo, negativo o neutral</td><td>Modelo, idioma y probabilidades guardados</td></tr>
+<tr><td><code>sentiment_score</code></td><td>P(positivo) − P(negativo)</td><td>Escala aproximada −1 a +1; no es probabilidad de subida</td></tr>
+<tr><td><code>news_count</code></td><td>Número de noticias por sesión</td><td>Distinguir ausencia de noticias de sentimiento neutral</td></tr>
+</tbody></table>
+</section>
+
+<section id="pipeline">
+<h2><span class="num">4</span>Pipeline de trabajo</h2>
+<p class="lead">Una secuencia reproducible, desde la pregunta de investigación hasta el informe.</p>
+<div class="pipeline">
+<div class="step"><strong>Definir protocolo</strong><br>Empresas, fechas, benchmark, objetivo y reglas de exclusión.</div>
+<div class="step"><strong>Descargar precios</strong><br>Guardar originales, fecha de extracción y fuente.</div>
+<div class="step"><strong>Validar series</strong><br>Huecos, duplicados, ajustes, calendario y valores extremos.</div>
+<div class="step"><strong>Preparar noticias</strong><br>Normalizar fechas, tickers, texto, URL y duplicados.</div>
+<div class="step"><strong>Analizar sentimiento</strong><br>Guardar etiquetas, probabilidades y score continuo.</div>
+<div class="step"><strong>Agregar por sesión</strong><br>Media/mediana, proporción de clases y volumen informativo.</div>
+<div class="step"><strong>Alinear temporalmente</strong><br>Solo información disponible en el instante de decisión.</div>
+<div class="step"><strong>Explorar y modelizar</strong><br>Descriptivos, comparativas y modelos de referencia.</div>
+<div class="step"><strong>Validar y comunicar</strong><br>Pruebas temporales, robustez, limitaciones e informe.</div>
+</div>
+<h3>Estructura de carpetas sugerida</h3>
+<div class="codebox"><div class="codehead"><span>Proyecto local</span><button class="copy" onclick="copyText(this)">Copiar estructura</button></div><pre>mercado_ia/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── notebooks/
+├── src/
+├── reports/
+│   └── figures/
+└── config/</pre></div>
+</section>
+
+<section id="analisis">
+<h2><span class="num">5</span>Análisis paso a paso</h2>
+<h3>5.1 Exploración de las series</h3>
+<ul><li>Rentabilidad acumulada y anualizada.</li><li>Volatilidad anualizada y máximo drawdown.</li><li>Correlaciones y comportamiento frente a SPY.</li><li>Gráficos normalizados a base 100 para comparar trayectorias.</li></ul>
+<h3>5.2 Comparación sectorial</h3>
+<ul><li>Tecnología frente a gran consumo con idéntico periodo y metodología.</li><li>Resultados por empresa, además de promedios del grupo.</li><li>Comparar pesos iguales con otras ponderaciones solo si se definen previamente.</li></ul>
+<h3>5.3 Noticias y sentimiento</h3>
+<ul><li>Clasificar titulares y textos con FinBERT.</li><li>Conservar probabilidades, texto original e identificador de fuente.</li><li>Detectar noticias duplicadas o menciones que no se refieran realmente a la empresa.</li><li>Agregar por día sin borrar la dispersión del sentimiento ni el volumen de noticias.</li></ul>
+<h3>5.4 Relación entre sentimiento y rentabilidad futura</h3>
+<p>Comparar un modelo base que utilice solo información histórica de mercado con otro que añada variables de sentimiento y volumen de noticias. Definir previamente el horizonte —por ejemplo, la siguiente sesión, cinco sesiones o veinte— y evitar mezclar resultados.</p>
+<h3>5.5 Modelos de referencia</h3>
+<table><thead><tr><th>Familia</th><th>Uso posible</th><th>Precaución</th></tr></thead><tbody>
+<tr><td>Modelo ingenuo</td><td>Referencia mínima para comparar</td><td>Definir objetivo y regla antes del test</td></tr>
+<tr><td>Regresión lineal/logística</td><td>Interpretabilidad y línea base</td><td>Revisar supuestos y estabilidad</td></tr>
+<tr><td>GARCH(1,1)</td><td>Modelización de volatilidad</td><td>No responde por sí solo a toda pregunta predictiva</td></tr>
+<tr><td>Random Forest / boosting</td><td>Relaciones no lineales en datos tabulares</td><td>Controlar sobreajuste y fuga de datos</td></tr>
+<tr><td>Transformers / secuenciales</td><td>Exploración avanzada tras una línea base sólida</td><td>Exigen datos, evaluación y recursos adecuados</td></tr>
+</tbody></table>
+</section>
+
+<section id="conductual">
+<h2><span class="num">6</span>Experimentos y patrones conductuales</h2>
+<p class="lead">Estas son líneas de investigación alternativas o complementarias al sentimiento. Con precios y volumen se pueden construir indicadores indirectos; no deben presentarse como mediciones directas de estados psicológicos ni como pruebas causales.</p>
+<div class="grid">
+<article class="card"><div class="kicker">Experimento A</div><h3>Anclaje a máximos y mínimos</h3><p><strong>Hipótesis:</strong> la proximidad al máximo de 52 semanas puede asociarse con decisiones de compra/venta distintas a las explicadas por la rentabilidad reciente.</p><p><strong>Variables:</strong> distancia al máximo/mínimo de 52 semanas, rentabilidad futura a 5 y 20 sesiones y volumen anormal.</p></article>
+<article class="card"><div class="kicker">Experimento B</div><h3>Aversión a las pérdidas y asimetría</h3><p><strong>Hipótesis:</strong> las caídas y las subidas de magnitud similar pueden ir seguidas de respuestas distintas en volatilidad y volumen.</p><p><strong>Variables:</strong> rentabilidad positiva/negativa, magnitud de la caída, volatilidad posterior y recuperación desde mínimos.</p></article>
+<article class="card"><div class="kicker">Experimento C</div><h3>Atención limitada</h3><p><strong>Hipótesis:</strong> picos de volumen o de cobertura informativa coinciden con mayor atención y posibles reacciones de corto plazo.</p><p><strong>Variables:</strong> volumen estandarizado, número de noticias, amplitud de la rentabilidad y reversión posterior.</p></article>
+<article class="card"><div class="kicker">Experimento D</div><h3>Exceso de confianza: proxy de rotación</h3><p><strong>Hipótesis:</strong> periodos de rentabilidades recientes elevadas pueden coincidir con mayor actividad negociadora.</p><p><strong>Variables:</strong> volumen relativo, persistencia de retornos y volatilidad. Sin datos de operaciones de inversores, la interpretación debe ser prudente.</p></article>
+<article class="card"><div class="kicker">Experimento E</div><h3>Comportamiento gregario (herding)</h3><p><strong>Hipótesis:</strong> en episodios de mercado, los rendimientos de varias empresas pueden converger más de lo esperado.</p><p><strong>Variables:</strong> dispersión transversal diaria de rentabilidades, correlaciones móviles y episodios de alta volatilidad; comparar periodos tranquilos y extremos.</p></article>
+<article class="card"><div class="kicker">Experimento F</div><h3>Disposición a vender ganadores y mantener perdedores</h3><p><strong>Hipótesis:</strong> tras ganancias o pérdidas acumuladas, las trayectorias posteriores pueden mostrar patrones asimétricos compatibles con el efecto disposición.</p><p><strong>Variables:</strong> rentabilidad acumulada desde una fecha de referencia, distancia al precio de referencia y retornos posteriores. Los precios agregados no revelan directamente decisiones individuales de venta.</p></article>
+</div>
+<h3>Diseño mínimo para cada experimento</h3>
+<ol><li><strong>Predefinir:</strong> hipótesis, variable explicativa, resultado, horizonte y signo esperado.</li><li><strong>Construir proxies:</strong> calcular cada variable solo con datos disponibles en el momento de decisión.</li><li><strong>Comparar:</strong> establecer una línea base y controles por rentabilidad previa, volatilidad, tamaño/sector y condiciones generales de mercado cuando proceda.</li><li><strong>Validar:</strong> usar ventanas temporales, pruebas fuera de muestra, subperiodos y corrección por múltiples contrastes si se prueban muchas hipótesis.</li><li><strong>Interpretar:</strong> describir asociaciones compatibles con una hipótesis; no afirmar que se ha demostrado un sesgo psicológico ni causalidad.</li></ol>
+<div class="note"><strong>Distinción importante:</strong> estos son estudios observacionales con proxies conductuales, no experimentos controlados con participantes. Para estudiar directamente preferencias, creencias o decisiones individuales harían falta datos de inversores, encuestas, tareas experimentales o registros de operaciones con la debida protección y autorización.</div>
+<h3>Tabla de variables conductuales candidatas</h3>
+<table><thead><tr><th>Mecanismo</th><th>Proxy inicial</th><th>Resultado a estudiar</th><th>Limitación principal</th></tr></thead><tbody>
+<tr><td>Anclaje</td><td>Distancia porcentual al máximo/mínimo de 52 semanas</td><td>Rentabilidad y volumen futuros</td><td>El máximo histórico también contiene información de mercado no psicológica</td></tr>
+<tr><td>Aversión a pérdidas</td><td>Indicador de caída y magnitud de retornos negativos</td><td>Volatilidad, volumen y recuperación</td><td>Una caída puede reflejar nueva información fundamental</td></tr>
+<tr><td>Atención limitada</td><td>Volumen anormal y recuento de noticias</td><td>Reacción inmediata y reversión</td><td>Volumen y noticias no miden atención directamente</td></tr>
+<tr><td>Exceso de confianza</td><td>Rotación/volumen relativo tras retornos recientes</td><td>Persistencia, volatilidad y reversión</td><td>Faltan datos de inversores y operaciones individuales</td></tr>
+<tr><td>Herding</td><td>Dispersión transversal de retornos entre empresas</td><td>Convergencia en episodios extremos</td><td>Factores comunes pueden generar convergencia sin imitación</td></tr>
+<tr><td>Efecto disposición</td><td>Trayectoria respecto a un precio de referencia</td><td>Asimetría tras ganancias/pérdidas</td><td>No se observan ventas reales ni precios de compra individuales</td></tr>
+</tbody></table>
+</section>
+
+<section id="prompts">
+<h2><span class="num">7</span>Prompts listos para reutilizar</h2>
+<p class="lead">Copia cada instrucción y acompáñala del dataset correspondiente. No pidas cifras si no has aportado los datos necesarios.</p>
+<div class="codebox"><div class="codehead"><span>Prompt 1 · Perfil de las series</span><button class="copy" onclick="copyText(this)">Copiar prompt</button></div><pre>Actúa como analista financiero cuantitativo. A partir del dataset adjunto, describe las series de las 10 empresas y del benchmark SPY para el periodo definido.
+
+Antes de calcular, inspecciona columnas, frecuencia, fechas, duplicados, valores ausentes y ajustes de precios.
+
+Calcula por ticker: rentabilidad acumulada, rentabilidad anualizada, volatilidad anualizada, máximo drawdown, número de sesiones y porcentaje de datos ausentes.
+
+Compara las rentabilidades normalizadas a base 100. Explica las fórmulas y genera código Python reproducible.
+
+No inventes cifras: si un dato no está disponible, indícalo. Distingue resultados descriptivos de explicaciones causales.</pre></div>
+<div class="codebox"><div class="codehead"><span>Prompt 2 · Tecnología frente a gran consumo</span><button class="copy" onclick="copyText(this)">Copiar prompt</button></div><pre>Compara Tecnología (AAPL, MSFT, NVDA, AMZN, GOOGL) con Gran consumo (WMT, COST, KO, PG, PEP).
+
+Usa el mismo periodo y metodología. Presenta distribución de rentabilidades, volatilidad, drawdown, correlaciones y comportamiento frente a SPY.
+
+Incluye resultados por empresa además de promedios de grupo. No interpretes el promedio sectorial como representativo de todas las empresas.
+
+Indica cómo afectan la selección de compañías, el peso igualitario y los episodios extremos. Entrega tabla, gráficos y código reproducible.</pre></div>
+<div class="codebox"><div class="codehead"><span>Prompt 3 · Clasificación de noticias financieras</span><button class="copy" onclick="copyText(this)">Copiar prompt</button></div><pre>Clasifica cada titular/noticia financiera con ProsusAI/FinBERT.
+
+Devuelve por noticia: id, ticker, fecha/hora, titular, etiqueta (positive/negative/neutral), probabilidad de cada clase y score = P(positive) - P(negative).
+
+No infieras el movimiento futuro de la acción a partir de la etiqueta. Conserva el texto original y una referencia a la fuente.
+
+Si el texto no está en inglés, marca el idioma y no asumas que FinBERT en inglés es válido sin evaluación adicional.
+
+Señala noticias duplicadas, titulares genéricos y menciones que no se refieren realmente a la empresa.</pre></div>
+<div class="codebox"><div class="codehead"><span>Prompt 4 · Sentimiento y rentabilidad futura</span><button class="copy" onclick="copyText(this)">Copiar prompt</button></div><pre>Evalúa si el sentimiento de noticias aporta información sobre la rentabilidad futura de cada empresa.
+
+Define claramente el instante de decisión. Usa solo noticias publicadas antes de ese instante; para noticias posteriores al cierre, desplaza la señal a la siguiente sesión.
+
+Compara: A) un modelo base con información histórica de precios/volumen; B) el modelo base más variables de sentimiento y volumen de noticias.
+
+Usa validación temporal walk-forward, sin particiones aleatorias. Compara con una línea base y comunica métricas fuera de muestra, incertidumbre y resultados por empresa.
+
+No afirmes causalidad. Incluye pruebas de robustez y analiza si el resultado depende de pocas noticias o de un subperiodo.</pre></div>
+<div class="codebox"><div class="codehead"><span>Prompt 5 · Diseño de análisis conductual</span><button class="copy" onclick="copyText(this)">Copiar prompt</button></div><pre>Actúa como investigador en finanzas conductuales y econometría. Con el dataset diario de las diez empresas y el benchmark SPY, propone un análisis de proxies conductuales sin afirmar que observamos directamente la psicología de los inversores.
+
+Evalúa estas líneas por separado: (1) anclaje a máximos/mínimos de 52 semanas; (2) asimetría tras retornos positivos y negativos como proxy compatible con aversión a pérdidas; (3) atención limitada mediante volumen anormal y recuento de noticias; (4) volumen/rotación tras retornos recientes como proxy débil de exceso de confianza; (5) herding mediante dispersión transversal de retornos; (6) trayectorias respecto a un precio de referencia como proxy limitado del efecto disposición.
+
+Para cada línea, formula una hipótesis, define variables y horizonte, explica limitaciones, establece una línea base y recomienda pruebas estadísticas. Calcula las variables solo con información disponible en el instante de decisión. Usa validación temporal, controles razonables y pruebas de robustez; advierte del problema de múltiples contrastes.
+
+Separa claramente resultados descriptivos, asociaciones e inferencias causales. Si los datos disponibles no permiten evaluar una hipótesis, indícalo y especifica qué datos adicionales harían falta. No inventes resultados ni datos.</pre></div>
+<div class="codebox"><div class="codehead"><span>Prompt 6 · Informe ejecutivo</span><button class="copy" onclick="copyText(this)">Copiar prompt</button></div><pre>Con los resultados validados, redacta un informe ejecutivo de máximo 3 páginas para una audiencia de negocio no técnica.
+
+Incluye:
+1. Resumen ejecutivo de un párrafo.
+2. Datos, empresas, periodo y fuentes.
+3. Cinco hallazgos principales con cifras, denominadores y referencias a tablas/gráficos.
+4. Diferencias entre tecnología y gran consumo, indicando excepciones por empresa.
+5. Qué aporta —o no aporta— el sentimiento frente a los modelos base.
+6. Tres limitaciones importantes y cinco siguientes pasos priorizados.
+
+No inventes cifras ni afirmes causalidad. Si los resultados no son concluyentes, dilo explícitamente. Añade que el análisis es académico y no constituye asesoramiento de inversión.</pre></div>
+</section>
+
+<section id="dashboard">
+<h2><span class="num">8</span>Dashboard e informe ejecutivo</h2>
+<div class="grid">
+<article class="card"><h3>Resumen</h3><p>Periodo, cobertura, evolución normalizada y comparación con SPY.</p></article>
+<article class="card"><h3>Riesgo y rentabilidad</h3><p>Volatilidad, drawdown, distribuciones y correlaciones.</p></article>
+<article class="card"><h3>Conducta y atención</h3><p>Volumen anormal, anclaje, asimetrías tras pérdidas y dispersión transversal.</p></article>
+<article class="card"><h3>Hipótesis y mercado</h3><p>Comparación de proxies conductuales, modelos base y resultados futuros.</p></article>
+<article class="card"><h3>Calidad y trazabilidad</h3><p>Datos ausentes, duplicados, cobertura por fuente y decisiones metodológicas.</p></article>
+<article class="card"><h3>Informe</h3><p>Hallazgos principales, excepciones, límites y próximos pasos.</p></article>
+</div>
+</section>
+
+<section id="calidad">
+<h2><span class="num">9</span>Control de calidad: errores que debemos evitar</h2>
+<ul>
+<li><strong>Fuga de información:</strong> usar una noticia publicada después del cierre para predecir ese mismo cierre.</li>
+<li><strong>Sesgo de supervivencia:</strong> estudiar solo empresas que hoy son grandes puede excluir empresas que desaparecieron o perdieron relevancia.</li>
+<li><strong>Sesgo de selección:</strong> las diez empresas no son una muestra aleatoria de sus sectores.</li>
+<li><strong>Cobertura desigual:</strong> una compañía puede tener muchas más noticias que otra.</li>
+<li><strong>Desajuste lingüístico:</strong> FinBERT estándar está orientado al inglés financiero; validar por separado otros idiomas.</li>
+<li><strong>Confundir proxy con mecanismo:</strong> volumen alto no demuestra exceso de confianza; convergencia de retornos no demuestra imitación.</li>
+<li><strong>Confundir sentimiento y recomendación:</strong> una noticia positiva no implica una subida futura.</li>
+<li><strong>Validación incorrecta:</strong> evitar particiones aleatorias para series temporales y no ajustar el modelo con el test.</li>
+<li><strong>Costes de inversión:</strong> una simulación sin comisiones, spread, deslizamiento, impuestos ni restricciones no demuestra rentabilidad realizable.</li>
+<li><strong>Reproducibilidad:</strong> registrar fuentes, fechas, parámetros, versiones, permisos y copias originales.</li>
+</ul>
+<div class="warning"><strong>Revisión humana imprescindible.</strong> La IA puede producir errores o conclusiones excesivas. Valida las cifras con código reproducible, revisa la calidad de las noticias y comprueba que cada afirmación del informe se sostiene en resultados observables.</div>
+<h3>Entregables finales</h3>
+<ol><li>Protocolo del estudio e hipótesis.</li><li>Dataset de precios limpio y diccionario de variables.</li><li>Dataset de noticias trazable.</li><li>Variables conductuales documentadas y, si se usa, tabla de sentimiento con probabilidades y score.</li><li>Scripts o notebooks reproducibles.</li><li>Comparativa sectorial, dashboard e informe.</li><li>Registro de experimentos y métricas fuera de muestra.</li></ol>
+</section>
+
+<section id="fuentes">
+<h2><span class="num">10</span>Fuentes técnicas iniciales</h2>
+<ul>
+<li><a href="https://ranaroussi.github.io/yfinance/" target="_blank" rel="noopener">Documentación de yfinance</a> — descarga de precios históricos; revisar las condiciones de uso de los datos.</li>
+<li><a href="https://huggingface.co/ProsusAI/finbert" target="_blank" rel="noopener">ProsusAI/FinBERT</a> — clasificación de texto financiero; revisar modelo, licencia y adecuación al corpus.</li>
+<li><a href="https://github.com/ProsusAI/finBERT" target="_blank" rel="noopener">Repositorio de FinBERT</a> — referencia metodológica y técnica.</li>
+</ul>
+</section>
+<hr>
+<p><strong>Idea de cierre:</strong> la IA puede acelerar la clasificación y síntesis de noticias; la contribución investigadora está en formular hipótesis conductuales contrastables, construir proxies válidos, diseñar una validación temporal honesta e interpretar con prudencia los resultados.</p>
+<p class="small">Documento de trabajo académico. No constituye asesoramiento financiero ni recomendación de inversión.</p>
+</main>
+<footer class="footer"><strong>MERCADOS FINANCIEROS: EXPERIMENTOS CONDUCTUALES E IA</strong><br><small>Proyecto académico y de investigación · Octubre 2026</small></footer>
+<script>
+function copyText(button){
+  const box=button.closest('.codebox');
+  const pre=box.querySelector('pre');
+  const text=pre.innerText;
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(()=>{const old=button.textContent;button.textContent='Copiado';setTimeout(()=>button.textContent=old,1400);}).catch(()=>fallbackCopy(text,button));
+  } else { fallbackCopy(text,button); }
+}
+function fallbackCopy(text,button){
+  const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();
+  try{document.execCommand('copy');const old=button.textContent;button.textContent='Copiado';setTimeout(()=>button.textContent=old,1400);}catch(e){button.textContent='Selecciona y copia';}
+  area.remove();
+}
+</script>
+</body>
+</html>
